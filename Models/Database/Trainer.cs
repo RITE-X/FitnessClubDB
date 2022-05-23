@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+
 namespace FitnessClubDB.Models.Database
 {
     public partial class Trainer
@@ -8,6 +9,7 @@ namespace FitnessClubDB.Models.Database
         {
             Clients = new HashSet<Client>();
             Workouts = new HashSet<Workout>();
+          
         }
 
         public int Id { get; set; }

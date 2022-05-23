@@ -8,7 +8,7 @@ namespace FitnessClubDB.Models.Database
         public DateTime PurchaseDate { get; set; }
         public int ServiceId { get; set; }
         public int ClientId { get; set; }
-
+        
         public virtual Client Client { get; set; } = null!;
         public virtual Membership Service { get; set; } = null!;
     }
