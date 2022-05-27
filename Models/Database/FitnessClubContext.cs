@@ -4,7 +4,8 @@ namespace FitnessClubDB.Models.Database
 {
     public partial class FitnessClubContext : DbContext
     {
-        private readonly string _connectionString; 
+        private readonly string _connectionString;
+
         public FitnessClubContext(string connectionString)
         {
             _connectionString = connectionString;
@@ -21,6 +22,7 @@ namespace FitnessClubDB.Models.Database
         public virtual DbSet<Complex> Complexes { get; set; } = null!;
         public virtual DbSet<Membership> Memberships { get; set; } = null!;
         public virtual DbSet<MembershipService> MembershipServices { get; set; } = null!;
+        public virtual DbSet<Specialization> Specializations { get; set; } = null!;
         public virtual DbSet<Trainer> Trainers { get; set; } = null!;
         public virtual DbSet<Visit> Visits { get; set; } = null!;
         public virtual DbSet<Workout> Workouts { get; set; } = null!;
@@ -70,17 +72,14 @@ namespace FitnessClubDB.Models.Database
 
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("first_name");
 
                 entity.Property(e => e.LastName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("last_name");
 
                 entity.Property(e => e.MiddleName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("middle_name");
 
                 entity.Property(e => e.TrainerId).HasColumnName("trainer_id");
@@ -96,11 +95,13 @@ namespace FitnessClubDB.Models.Database
             {
                 entity.ToTable("complex");
 
+                entity.HasIndex(e => e.ComplexName, "complex_complex_name_uindex")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ComplexName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("complex_name");
             });
 
@@ -142,6 +143,17 @@ namespace FitnessClubDB.Models.Database
                     .HasConstraintName("FK__membershi__membe__1332DBDC");
             });
 
+            modelBuilder.Entity<Specialization>(entity =>
+            {
+                entity.ToTable("specialization");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(15)
+                    .HasColumnName("title");
+            });
+
             modelBuilder.Entity<Trainer>(entity =>
             {
                 entity.ToTable("trainer");
@@ -150,23 +162,23 @@ namespace FitnessClubDB.Models.Database
 
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("first_name");
 
                 entity.Property(e => e.LastName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("last_name");
 
                 entity.Property(e => e.MiddleName)
                     .HasMaxLength(15)
-                    .IsUnicode(false)
                     .HasColumnName("middle_name");
 
-                entity.Property(e => e.Specialization)
-                    .HasMaxLength(15)
-                    .IsUnicode(false)
-                    .HasColumnName("specialization");
+                entity.Property(e => e.SpecializationId).HasColumnName("specialization_id");
+
+                entity.HasOne(d => d.Specialization)
+                    .WithMany(p => p.Trainers)
+                    .HasForeignKey(d => d.SpecializationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("trainer_specialization_id_fk");
             });
 
             modelBuilder.Entity<Visit>(entity =>
