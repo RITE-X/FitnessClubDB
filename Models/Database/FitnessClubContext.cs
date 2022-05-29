@@ -118,6 +118,10 @@ namespace FitnessClubDB.Models.Database
                 entity.Property(e => e.TimeLimitUntil).HasColumnName("time_limit_until");
 
                 entity.Property(e => e.ValidityInDays).HasColumnName("validity_in_days");
+                
+                entity.Property(e => e.Title)
+                    .HasMaxLength(15)
+                    .HasColumnName("title");
             });
 
             modelBuilder.Entity<MembershipService>(entity =>

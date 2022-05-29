@@ -15,6 +15,8 @@ namespace FitnessClubDB.Models.Database
         public decimal Price { get; set; }
         public int ValidityInDays { get; set; }
         public TimeSpan TimeLimitUntil { get; set; }
+        
+        public string Title { get; set; } = null!;
 
         public virtual ICollection<Cheque> Cheques { get; set; }
         public virtual ICollection<MembershipService> MembershipServices { get; set; }
