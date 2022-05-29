@@ -3,12 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:view="clr-namespace:FitnessClubDB.ViewModels.View"
+        xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
+        xmlns:database="clr-namespace:FitnessClubDB.Models.Database"
+        xmlns:cmd="clr-namespace:FitnessClubDB.Commands"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:l="clr-namespace:FitnessClubDB"
+        xmlns:viewModels="clr-namespace:FitnessClubDB.ViewModels"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="MainWindow" MinHeight="470 " Height="470" MinWidth="820" Width="820">
 
     <Window.DataContext>
-        <view:MainWindowViewModel />
+        <viewModels:MainWindowViewModel />
 
     </Window.DataContext>
 
@@ -20,16 +26,22 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
-            <MenuItem Header="Клієнт">
+            <MenuItem Header="Дії">
 
-                <MenuItem Header="Відвідування" />
-                <MenuItem Header="Відмітити відвідування" />
-                <MenuItem Header="Запис до тренера" />
-
-            </MenuItem>
-            <MenuItem Header="Тренер">
-                <MenuItem Header="Тренування">
-                </MenuItem>
+                <MenuItem Header="Відвідування" Command="{Binding GetVisits}"
+                          CommandParameter="{Binding ElementName= Clients, Path=  SelectedValue}" />
+                
+                <MenuItem Header="Відмітити відвідування" Command="{Binding OpenNoteVisitWindow}"
+                          CommandParameter="{Binding ElementName= Clients, Path=  SelectedValue}" />
+                
+                <MenuItem Header="Запис до тренера" Command="{Binding OpenTrainerRecordWindow}"
+                          CommandParameter="{Binding ElementName=Clients, Path=  SelectedValue}" />
+                
+                <MenuItem Header="Тренування" Command="{Binding GetTrainings}"
+                          CommandParameter="{Binding ElementName=Trainers, Path=  SelectedValue}" />
+                
+                <MenuItem Header="Чеки" Command="{Binding GetCheques}"
+                          CommandParameter="{Binding ElementName=Clients, Path=  SelectedValue}" />
             </MenuItem>
         </Menu>
 
@@ -43,11 +55,9 @@
                 <TabItem Header="Home">
                     <DataGrid AutoGenerateColumns="True"
                               ItemsSource="{Binding Home}">
-
                     </DataGrid>
-
-
                 </TabItem>
+                
 
                 <TabItem Header="Абонементи">
                     <DataGrid x:Name="Home" AutoGenerateColumns="False" CanUserAddRows="False"
@@ -55,13 +65,10 @@
                               ItemsSource="{Binding Memberships}">
 
                         <DataGrid.Columns>
-
+                            <DataGridTextColumn Header="Найменування" Binding="{Binding Title}" />
                             <DataGridTextColumn Header="Ціна" Binding="{Binding Price}" />
-
                             <DataGridTextColumn Header="Термін дії (дні)" Binding="{Binding  ValidityInDays}" />
                             <DataGridTextColumn Header="Ліміт часу (до)" Binding="{Binding TimeLimitUntil}" />
-
-
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -90,8 +97,6 @@
                                 </DataGridTextColumn.Binding>
                             </DataGridTextColumn>
                             <DataGridTextColumn Header="Час тренування" Binding="{Binding StartTime}" />
-
-
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -131,33 +136,43 @@
             </TabControl>
 
 
-            <DockPanel Grid.Column="1">
-
-                <TabControl DockPanel.Dock="Top">
-                    <TabItem Header="Тренери">
-                        <ScrollViewer MaxHeight="330">
-                            <ListBox x:Name="Trainers" ItemsSource="{Binding Trainers}" SelectedValuePath="Id">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock>
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{} {0} {1} {2}">
-                                                    <Binding Path="LastName" />
-                                                    <Binding Path="FirstName" />
-                                                    <Binding Path="MiddleName" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </ScrollViewer>
-                    </TabItem>
-                    <TabItem Header="Клієнти">
-
-                        <ScrollViewer MaxHeight="330">
+            <TabControl Grid.Column="1" SelectedValue="{Binding SelectedTab, Mode=OneWayToSource}">
+                <TabItem Header="Клієнти" >
+                    <DockPanel>
+                        <ScrollViewer MaxHeight="330" DockPanel.Dock="Top">
                             <ListBox x:Name="Clients" ItemsSource="{Binding Clients}"
-                                     SelectedValuePath="Id">
+                                     SelectedValue="" SelectedIndex="0" >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{} {0} {1} {2}">
+                                                    <Binding Path="LastName" />
+                                                    <Binding Path="FirstName" />
+                                                    <Binding Path="MiddleName" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                        
+                        <WrapPanel ItemHeight="40" ItemWidth="200" Orientation="Horizontal" Margin="4"
+                                   HorizontalAlignment="Center" VerticalAlignment="Bottom" DockPanel.Dock="Bottom"
+                                   MinWidth="200">
+                            <Button Content="Зареєструвати нового клієнта" Margin="3"
+                                    Command="{Binding OpenRegisterNewClientWindow}" />
+                        </WrapPanel>
+                    </DockPanel>
+                </TabItem>
+                
+                
+                <TabItem Header="Тренери">
+                    <DockPanel>
+                        <ScrollViewer MaxHeight="330" DockPanel.Dock="Top">
+                            <ListBox x:Name="Trainers" ItemsSource="{Binding Trainers}"
+                                     SelectedValue="" SelectedIndex="0" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock>
@@ -174,24 +189,17 @@
                             </ListBox>
                         </ScrollViewer>
 
-
-                    </TabItem>
-
-                </TabControl>
-
-                <WrapPanel ItemHeight="40" ItemWidth="100" Orientation="Horizontal" Margin="4"
-                           HorizontalAlignment="Center" VerticalAlignment="Bottom" DockPanel.Dock="Bottom"
-                           MinWidth="200">
-                    <Button DockPanel.Dock="Left" Content="Додати" Margin="3" />
-                    <Button DockPanel.Dock="Right" Content="Видалити" Margin="3" />
-                </WrapPanel>
-
-
-            </DockPanel>
-
-
+                        <WrapPanel ItemHeight="40" ItemWidth="100" Orientation="Horizontal" Margin="4"
+                                   HorizontalAlignment="Center" VerticalAlignment="Bottom" DockPanel.Dock="Bottom"
+                                   MinWidth="200">
+                            <Button Content="Найняти" Margin="3"
+                                    Command="{Binding OpenInsertTrainerWindow}" />
+                            <Button  Content="Звільнити" Margin="3" Command="{Binding DeleteTrainer}"
+                                     CommandParameter="{Binding ElementName=Trainers, Path=  SelectedValue}"/>
+                        </WrapPanel>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
         </Grid>
-
-
     </Grid>
 </Window>
