@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using FitnessClubDB.Commands;
 using FitnessClubDB.Models;
 using FitnessClubDB.Models.Database;
@@ -9,14 +8,9 @@ using FitnessClubDB.ViewModels.Base;
 
 namespace FitnessClubDB.ViewModels;
 
-public class InsertTrainerViewModel : ViewModel, ICloseWindow
+public class InsertTrainerViewModel : ViewModel, ICloseWindow, IDataErrorInfo
 {
-    public InsertTrainerViewModel()
-    {
-        SelectedSpecialization = DBRoot.GetContext().Specializations.First();
-    }
-
-
+    
     public BindingList<Specialization> Specializations => DBRoot.GetContext().Specializations.Local.ToBindingList();
 
     private Specialization? _selectedSpecialization;
@@ -69,4 +63,38 @@ public class InsertTrainerViewModel : ViewModel, ICloseWindow
 
     public Action? Close { get; set; }
     public bool CanClose() => true;
+    public string Error =>  throw new NotImplementedException();
+
+    public string this[string columnName]
+    {
+        get
+        {
+            var error = string.Empty;
+
+            switch (columnName)
+            {
+                case nameof(FirstName):
+                    if (string.IsNullOrEmpty(FirstName))
+                        error = "Вкажіть ім'я";
+                    break;
+
+                case nameof(LastName):
+                    if (string.IsNullOrEmpty(LastName))
+                        error = "Вкажіть прізвище";
+                    break;
+                
+                case nameof(MiddleName):
+                    if (string.IsNullOrEmpty(MiddleName))
+                        error = "Вкажіть по батькові";
+                    break;
+                
+                case nameof(SelectedSpecialization):
+                    if (SelectedSpecialization is null)
+                        error = "Оберіть спеціалізацію";
+                    break;
+            }
+            
+            return error;
+        }
+    }
 }

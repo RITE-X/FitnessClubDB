@@ -8,13 +8,14 @@ using FitnessClubDB.ViewModels.Base;
 
 namespace FitnessClubDB.ViewModels;
 
-public class TrainerRecordViewModel : ViewModel, ICloseWindow
+public class TrainerRecordViewModel : ViewModel, ICloseWindow, IDataErrorInfo
 {
     private readonly Client _client;
 
     public TrainerRecordViewModel(Client client)
     {
         _client = client;
+        StartTime = DateTime.Now;
     }
 
     public BindingList<Specialization> Specializations => DBRoot.GetContext().Specializations.Local.ToBindingList();
@@ -55,7 +56,57 @@ public class TrainerRecordViewModel : ViewModel, ICloseWindow
         Close?.Invoke();
     }, _ => SelectedTrainer != null && SelectedSpecialization != null && StartTime > DateTime.Now);
 
+    
+    public bool IsDateAccessible
+    {
+        get
+        {
+            var flag = false;
+            foreach (var cheque in _client.Cheques)
+            {
+                foreach (var membershipServices in cheque.Service.MembershipServices)
+                {
+                    flag = membershipServices.Membership.TimeLimitUntil > StartTime.TimeOfDay;
+                }
+            }
+
+            return flag;
+        }
+    }
+    
     public Action? Close { get; set; }
 
     public bool CanClose() => true;
+    public string Error =>  throw new NotImplementedException();
+
+    public string this[string columnName]
+    {
+        get
+        {
+            var error = string.Empty;
+
+            switch (columnName)
+            {
+                case nameof(SelectedSpecialization):
+                    if (SelectedSpecialization is null)
+                        error = "Оберіть спеціалізацію";
+                    break;
+
+                case nameof(SelectedTrainer):
+                    if (SelectedTrainer is null)
+                        error = "Оберіть тренера";
+                    break;
+    
+                case nameof(StartTime):
+                    if (StartTime < DateTime.Now)
+                        error = "Не можна вибрати минулу дату";
+                    else if(!IsDateAccessible)
+                        error = "Ваш абонемент не дозволяє обрати цей час";
+                    break;
+                  
+            }
+            
+            return error;
+        }
+    }
 }

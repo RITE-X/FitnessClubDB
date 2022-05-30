@@ -9,26 +9,59 @@
         Title="Реєстрація клієнта" Width="300"  MinWidth="250" MaxHeight="220" WindowStyle="ToolWindow"
         windowCloser:WindowCloser.EnableWindowClosing="True">
     
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Styles/ComboBox.xaml" />
+                <ResourceDictionary Source="../../Styles/TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <Grid>
         <StackPanel>
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Ім'я" IsReadOnly="True"></TextBox>
-                <TextBox Text="{Binding FirstName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox>
+                    <TextBox.Text>
+                        <Binding Path="FirstName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </UniformGrid>
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Прізвище" IsReadOnly="True"></TextBox>
-                <TextBox Text="{Binding LastName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox >
+                    <TextBox.Text>
+                        <Binding Path="LastName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </UniformGrid>
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Ім'я по батькові" IsReadOnly="True"></TextBox>
-                <TextBox Text="{Binding MiddleName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox Text="{Binding MiddleName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             </UniformGrid>
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Тренер" IsReadOnly="True"></TextBox>
-                <ComboBox ItemsSource="{Binding Trainers}"
-                          SelectedItem="{Binding SelectedTrainer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox ItemsSource="{Binding Trainers}">
+                    
+                    <ComboBox.SelectedItem>
+                        <Binding Path="SelectedTrainer" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                    
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
@@ -47,8 +80,16 @@
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Абонемент" IsReadOnly="True"></TextBox>
-                <ComboBox ItemsSource="{Binding Memberships}"
-                          SelectedItem="{Binding SelectedMembership, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox ItemsSource="{Binding Memberships}">
+                    
+                <ComboBox.SelectedItem>
+                        <Binding Path="SelectedMembership" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                    
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>

@@ -9,13 +9,31 @@
         WindowStartupLocation="CenterOwner"
         Title="Запис до тренера" Width="540" Height="160" MinWidth="250" MaxHeight="160" WindowStyle="ToolWindow"
         windowCloser:WindowCloser.EnableWindowClosing="True">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Styles/ComboBox.xaml" />
+                <ResourceDictionary Source="../../Styles/DateTimePicker.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <Grid>
         <StackPanel>
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Спеціалізація" IsReadOnly="True"></TextBox>
-                <ComboBox ItemsSource="{Binding Specializations}"
-                          SelectedItem="{Binding SelectedSpecialization, Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox ItemsSource="{Binding Specializations}">
+                    
+                    <ComboBox.SelectedItem>
+                        <Binding Path="SelectedSpecialization" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                    
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Title   }"></TextBlock>
@@ -26,8 +44,16 @@
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Тренер" IsReadOnly="True"></TextBox>
-                <ComboBox ItemsSource="{Binding  SelectedSpecialization.Trainers}"
-                          SelectedItem="{Binding SelectedTrainer, Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox ItemsSource="{Binding  SelectedSpecialization.Trainers}">
+                    
+                    <ComboBox.SelectedItem>
+                        <Binding Path="SelectedTrainer" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                    
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
@@ -46,8 +72,16 @@
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Час тренування" IsReadOnly="True"></TextBox>
-                <xctk:DateTimePicker
-                    Value="{Binding StartTime, Mode= OneWayToSource ,UpdateSourceTrigger=PropertyChanged}" />
+                <xctk:DateTimePicker>
+                    <xctk:DateTimePicker.Value>
+                        <Binding Path="StartTime" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </xctk:DateTimePicker.Value>
+                    
+                </xctk:DateTimePicker>
             </UniformGrid>
 
             <Button Content="Ок" Margin="20,10,20,10" Command="{Binding InsertWorkout}"></Button>

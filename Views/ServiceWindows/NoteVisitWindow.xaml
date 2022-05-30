@@ -10,23 +10,50 @@
         Title="Відвідування комплексу" Width="540" Height="140" MinWidth="250" MaxHeight="140" WindowStyle="ToolWindow"
         windowCloser:WindowCloser.EnableWindowClosing="True">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Styles/ComboBox.xaml" />
+                <ResourceDictionary Source="../../Styles/DateTimePicker.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <StackPanel>
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Комплекс" IsReadOnly="True"></TextBox>
-                <ComboBox ItemsSource="{Binding Complexes}"
-                          SelectedItem="{Binding SelectedComplex, Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox ItemsSource="{Binding ClientComplexes}">
+
+                    <ComboBox.SelectedItem>
+                        <Binding Path="SelectedComplex" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ComplexName }"></TextBlock>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
+
+
                 </ComboBox>
             </UniformGrid>
 
             <UniformGrid Columns="2" Rows="0" Margin="3">
                 <TextBox Text="Час візиту" IsReadOnly="True"></TextBox>
-                <xctk:DateTimePicker Value="{Binding VisitDate, Mode= TwoWay ,UpdateSourceTrigger=PropertyChanged}" />
+                <xctk:DateTimePicker>
+                    <xctk:DateTimePicker.Value>
+                        <Binding Path="VisitDate" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </xctk:DateTimePicker.Value>
+                </xctk:DateTimePicker>
             </UniformGrid>
 
             <Button Content="Ок" Margin="20,10,20,10" Command="{Binding NoteVisit}"></Button>

@@ -9,7 +9,7 @@ using FitnessClubDB.ViewModels.Base;
 
 namespace FitnessClubDB.ViewModels;
 
-public class RegisterNewClientViewModel : ViewModel, ICloseWindow
+public class RegisterNewClientViewModel : ViewModel, ICloseWindow, IDataErrorInfo
 {
     private string? _firstName;
 
@@ -78,4 +78,37 @@ public class RegisterNewClientViewModel : ViewModel, ICloseWindow
 
     public Action? Close { get; set; }
     public bool CanClose() => true;
+    public string Error =>  throw new NotImplementedException();
+
+    public string this[string columnName]
+    {
+        get
+        {
+            var error = string.Empty;
+
+            switch (columnName)
+            {
+                case nameof(FirstName):
+                    if (string.IsNullOrEmpty(FirstName))
+                        error = "Вкажіть ім'я";
+                    break;
+
+                case nameof(LastName):
+                    if (string.IsNullOrEmpty(LastName))
+                        error = "Вкажіть прізвище";
+                    break;
+                
+                case nameof(SelectedTrainer):
+                    if (SelectedTrainer is null)
+                        error = "Оберіть тренера";
+                    break;
+                case nameof(SelectedMembership):
+                    if (SelectedMembership is null)
+                        error = "Оберіть абонемент";
+                    break;
+            }
+            
+            return error;
+        }
+    }
 }
