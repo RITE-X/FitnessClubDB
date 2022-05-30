@@ -20,6 +20,7 @@ public static class DBRoot
         FitnessClubContext.Visits.Load();
         FitnessClubContext.Workouts.Load();
         FitnessClubContext.Specializations.Load();
+        FitnessClubContext.MembershipServices.Load();
     }
 
     public static FitnessClubContext GetContext()
